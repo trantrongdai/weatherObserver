@@ -19,13 +19,13 @@ import com.thrift.generated.WeatherService;
  * when has changed weather data.
  * @author uchiha
  */
-public class WeatherStation implements Subject {
+public class WeatherStationSubject implements Subject {
     private static WeatherService.Client station;
     private static TTransport transport;
     private List<WeatherServer> weatherServers;
     private WeatherData weatherData;
 
-    public WeatherStation() {
+    public WeatherStationSubject() {
         weatherServers = new ArrayList<>();
     }
 
@@ -82,7 +82,6 @@ public class WeatherStation implements Subject {
                 station.save(weatherData);
             }
         }
-        transport.close();
     }
 
 }

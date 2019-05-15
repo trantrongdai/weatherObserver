@@ -8,9 +8,9 @@ exception InvalidOperationException {
 struct WeatherData {
     1: string stationIp,
     2: string time,
-    3: i32 temperature,
-    4: i32 humidity,
-    5: i32 windSpeed,
+    3: string temperature,
+    4: string humidity,
+    5: string windSpeed,
     6: bool rain,
 }
 

@@ -11,7 +11,7 @@ import org.apache.thrift.TException;
 import com.thrift.generated.InvalidOperationException;
 import com.thrift.generated.WeatherData;
 import com.thrift.models.WeatherServer;
-import com.thrift.models.WeatherStation;
+import com.thrift.models.WeatherStationSubject;
 
 /**
  * Client application test.
@@ -20,10 +20,10 @@ import com.thrift.models.WeatherStation;
 public class ClientApplication {
 
     public static void main(String[] args) throws UnknownHostException, InvalidOperationException, TException {
-        WeatherStation client = new WeatherStation();
+        WeatherStationSubject weatherStation = new WeatherStationSubject();
 
         InetAddress localhost = InetAddress.getLocalHost();
-        client.registerWeatherServer(new WeatherServer(localhost.getHostAddress().trim(), 9900));
+        weatherStation.registerWeatherServer(new WeatherServer(localhost.getHostAddress().trim(), 9901));
 
         // client.registerWeatherServer(new
         // WeatherServer(localhost.getHostAddress().trim(), 9901)); // register
@@ -35,12 +35,12 @@ public class ClientApplication {
         System.out.println("System IP Address : " + (localhost.getHostAddress()).trim());
         weatherData.setStationIp(localhost.getHostAddress());
         weatherData.setTime(dateFormat.format(date));
-        weatherData.setTemperature(30);
-        weatherData.setHumidity(70);
-        weatherData.setWindSpeed(100);
+        weatherData.setTemperature("30*C");
+        weatherData.setHumidity("70");
+        weatherData.setWindSpeed("100km/h");
         weatherData.setRain(false);
 
-        client.setWeatherData(weatherData);
-        client.notifyWeatherServer();
+        weatherStation.setWeatherData(weatherData);
+        weatherStation.notifyWeatherServer();
     }
 }
