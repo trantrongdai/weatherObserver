@@ -23,7 +23,7 @@ public class ClientApplication {
         WeatherStationSubject weatherStation = new WeatherStationSubject();
 
         InetAddress localhost = InetAddress.getLocalHost();
-        weatherStation.registerWeatherServer(new WeatherServer(localhost.getHostAddress().trim(), 9901));
+        weatherStation.registerWeatherServer(new WeatherServer("192.168.11.187", 9901));
 
         // client.registerWeatherServer(new
         // WeatherServer(localhost.getHostAddress().trim(), 9901)); // register

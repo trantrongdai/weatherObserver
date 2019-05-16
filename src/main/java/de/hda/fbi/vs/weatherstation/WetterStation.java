@@ -24,9 +24,9 @@ public class WetterStation {
     private static int portNr = 9090;
 
     /** weather server port */
-    private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9091;
+    private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9901;
     /** List of weather server ip */
-    private static final String[] WEATHER_SERVER_IPS = { "192.168.0.1" };
+    private static final String[] WEATHER_SERVER_IPS = { "192.168.11.187" };
     /** Weather station subject to notify weather data to all weather server */
     private WeatherStationSubject weatherStationSubject = new WeatherStationSubject();
     /** Weather data instance */
@@ -54,6 +54,7 @@ public class WetterStation {
             System.out.println("Wetterstation hat gestartet.");
 
             packetHandling(socket, packet);
+            
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +74,7 @@ public class WetterStation {
     }
 
     private void notifyAllWeatherServer() throws InvalidOperationException, TException, UnknownHostException {
-
+        
         weatherStationSubject.registerWeatherServer(new WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
