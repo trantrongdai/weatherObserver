@@ -74,7 +74,6 @@ public class WeatherStationSubject implements Subject {
             WeatherServer weatherServer = weatherServers.get(i);
             transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
             transport.open();
-
             TProtocol protocol = new TBinaryProtocol(transport);
             station = new WeatherService.Client(protocol);
             boolean result = station.ping();

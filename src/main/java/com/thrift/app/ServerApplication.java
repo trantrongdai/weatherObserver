@@ -13,6 +13,5 @@ public class ServerApplication {
     public static void main(String[] args) throws TTransportException {
         WeatherServiceServer server = new WeatherServiceServer();
         server.start(9901);
-
     }
 }
