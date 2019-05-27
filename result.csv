@@ -1,0 +1,2 @@
+Report,locationID,name,latitude,longtitude,description,temperature,humidity,windStrength,rainfall,atmosphericpressure,windDirection,dateTime
+CLOUDY,20,Darmstadt,49.863,8.64,null,20.0,35,25,45.0,2,60,2019/05/28 00:09:23,

@@ -15,6 +15,7 @@ import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.Weather.Client;
 import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generated.WeatherService;
+import com.thrift.json.JacksonStreamingWriterAndReader;
 
 /**
  * save weather data. and notify for all server

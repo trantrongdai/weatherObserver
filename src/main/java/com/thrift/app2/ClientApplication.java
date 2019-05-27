@@ -19,18 +19,17 @@ public class ClientApplication {
 		WeatherStationSubject weatherStation = new WeatherStationSubject();
 		InetAddress localhost = InetAddress.getLocalHost();
 		weatherStation.registerWeatherServer(new WeatherServer("192.168.48.1", 9901));
-		
 		WeatherReport weatherReport = new WeatherReport();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         System.out.println("System IP Address : " + (localhost.getHostAddress()).trim());
         Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
-        Report report = Report.RAINY;
+        Report report = Report.CLOUDY;
         weatherReport.setReport(report);
         weatherReport.setLocation(location);
         weatherReport.setTemperature(20.0);
-        weatherReport.setHumidity((byte)75);
-        weatherReport.setWindStrength((byte)75);
+        weatherReport.setHumidity((byte)35);
+        weatherReport.setWindStrength((byte)25);
         weatherReport.setRainfall(45.0);
         weatherReport.setAtmosphericpressure((short)2);
         weatherReport.setWindDirection((short)90);
