@@ -1,0 +1,1 @@
+package com.thrift.app2;
