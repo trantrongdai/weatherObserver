@@ -9,5 +9,4 @@ public class ServerApplication2 {
 		 WeatherServiceServer server = new WeatherServiceServer();
 	       server.start(9901);
 	}
-
 }

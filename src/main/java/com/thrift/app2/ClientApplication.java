@@ -24,7 +24,7 @@ public class ClientApplication {
         Date date = new Date();
         System.out.println("System IP Address : " + (localhost.getHostAddress()).trim());
         Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
-        Report report = Report.CLOUDY;
+        Report report = Report.SNOW;
         weatherReport.setReport(report);
         weatherReport.setLocation(location);
         weatherReport.setTemperature(20.0);

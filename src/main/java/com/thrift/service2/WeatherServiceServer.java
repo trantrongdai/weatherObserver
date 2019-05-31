@@ -15,6 +15,7 @@ import com.thrift.generate2.weatherService.UnknownUserException;
 import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generate2.weatherService.WeatherWarning;
+import com.thrift.json.JacksonStreamingWriterAndReader;
 import com.thrift.service2.WeatherServiceImpl;
 
 public class WeatherServiceServer {
@@ -55,6 +56,7 @@ public class WeatherServiceServer {
 							return null;
 						}
 					})));
+		JacksonStreamingWriterAndReader.readerCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV);
 		System.out.println("Startting Server...");
 		server.serve();
 		System.out.println("Done");

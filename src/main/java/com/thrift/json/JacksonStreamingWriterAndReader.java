@@ -1,8 +1,14 @@
 package com.thrift.json;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.thrift.generate2.weatherService.WeatherReport;
 
@@ -13,13 +19,17 @@ public class JacksonStreamingWriterAndReader {
     public static final String PATH_FILE_CSV = "result.csv";
     // CSV file header
     private static final String FILE_HEADER = "Report,locationID,name,latitude,longtitude,description,temperature,humidity,windStrength,rainfall,atmosphericpressure,windDirection,dateTime";
-	public static void  WriterCsvFile(String fileName, WeatherReport weatherReport) {
-		FileWriter fileWriter = null;
+	/**
+	 * Writer Weather Reports on file result.csv data
+	 * @param fileName
+	 * @param weatherReport
+	 */
+    public static void  WriterCsvFile(String fileName, WeatherReport weatherReport) {
 		try {
 			File file = new File(fileName);
-			fileWriter = new FileWriter(fileName);
+			FileWriter fileWriter = new FileWriter(fileName, true);
 			
-			if(!file.exists()) {
+			if(file.exists()) {
 				fileWriter.append(weatherReport.getReport().toString());
 	            fileWriter.append(COMMA_DELIMITER);
 	            fileWriter.append(String.valueOf(weatherReport.getLocation().getLocationID()));
@@ -83,10 +93,6 @@ public class JacksonStreamingWriterAndReader {
 	            fileWriter.append(NEW_LINE_SEPARATOR);
 	            System.out.println("CSV file was created successfully !!!");
 			}
-		} catch (Exception e) {
-			 System.out.println("Error in CsvFileWriter !!!");
-	         e.printStackTrace();
-		} finally {
 			 try {
 	                fileWriter.flush();
 	                fileWriter.close();
@@ -94,7 +100,31 @@ public class JacksonStreamingWriterAndReader {
 	                System.out.println("Error while flushing/closing fileWriter !!!");
 	                e.printStackTrace();
 	            }
+		} catch (Exception e) {
+			 System.out.println("Error in CsvFileWriter !!!");
+	         e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * read result Csv data 
+	 * @param fileName
+	 */
+	public static void  readerCsvFile(String fileName) {
+		BufferedReader reader;
+		try {
+			reader = Files.newBufferedReader(Paths.get(PATH_FILE_CSV));
+			String line = reader.readLine();
+			while(line != null) {
+				System.out.println(line);
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (Exception e) {
+			System.out.println("Error in CsvFileReader !!!");
+			e.printStackTrace();
+		}
+		
 	}
 
 }

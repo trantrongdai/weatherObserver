@@ -26,7 +26,7 @@ public class WetterStation {
     /** weather server port */
     private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9901;
     /** List of weather server ip */
-    private static final String[] WEATHER_SERVER_IPS = { "192.168.11.187" };
+    private static final String[] WEATHER_SERVER_IPS = { "192.168.48.1" };
     /** Weather station subject to notify weather data to all weather server */
     private WeatherStationSubject weatherStationSubject = new WeatherStationSubject();
     /** Weather data instance */
