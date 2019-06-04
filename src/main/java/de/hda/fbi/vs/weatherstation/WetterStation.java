@@ -14,6 +14,9 @@ import java.util.List;
 
 import org.apache.thrift.TException;
 
+import com.thrift.generate2.weatherService.Location;
+import com.thrift.generate2.weatherService.Report;
+import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generated.InvalidOperationException;
 import com.thrift.generated.WeatherData;
 import com.thrift.models.WeatherServer;
@@ -26,11 +29,16 @@ public class WetterStation {
     /** weather server port */
     private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9901;
     /** List of weather server ip */
-    private static final String[] WEATHER_SERVER_IPS = { "192.168.48.1" };
+    private static final String[] WEATHER_SERVER_IPS = { "172.17.4.96" };
     /** Weather station subject to notify weather data to all weather server */
-    private WeatherStationSubject weatherStationSubject = new WeatherStationSubject();
+    // for Demo
+    //private WeatherStationSubject weatherStationSubject = new WeatherStationSubject();
+    //WeatherStationSubject Hier
+    private com.thrift.Modes2.WeatherStationSubject weatherStationSubject = new com.thrift.Modes2.WeatherStationSubject();
     /** Weather data instance */
     private WeatherData weatherData = new WeatherData();
+    /** Weather Report instance */
+    private WeatherReport weatherReport = new WeatherReport();
     /** Localhost address */
     private InetAddress localhost;
 
@@ -69,10 +77,40 @@ public class WetterStation {
             String data = new String(packet.getData(), 0, packet.getLength());
             System.out.printf("IP: %s | Port: %d | %s\n", packet.getAddress(), packet.getPort(), data);
             sensorToList(data);
-            notifyAllWeatherServer();
+            notifyAllWeatherServe();
         }
     }
+    // Code Notify hier
+    private void notifyAllWeatherServe() throws InvalidOperationException, TException, UnknownHostException {
+    	weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+    	 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+         Date date = new Date();
+         localhost = InetAddress.getLocalHost();
+         System.out.println("Weather Station IP Address : " + (localhost.getHostAddress()).trim());
+         Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
+         Report report = Report.SNOW;
+         weatherReport.setLocation(location);
+         weatherReport.setReport(report);
+         weatherReport.setDateTime(dateFormat.format(date));
+         weatherStationSubject.setWeatherReport(weatherReport);
+         (new Thread() {
+             @Override
+             public void run() {
+                 try {
+                     weatherStationSubject.notifyWeatherServer();
+                 } catch (InvalidOperationException e) {
+                     // TODO Auto-generated catch block
+                     e.printStackTrace();
+                 } catch (TException e) {
+                     // TODO Auto-generated catch block
+                     e.printStackTrace();
+                 }
+             }
+         }).start();
+    }
 
+    // Demo
+    /*
     private void notifyAllWeatherServer() throws InvalidOperationException, TException, UnknownHostException {
         
         weatherStationSubject.registerWeatherServer(new WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
@@ -100,7 +138,7 @@ public class WetterStation {
             }
         }).start();
     }
-
+     */
     private void sensorToList(String msg) {
         String msgToAdd = null;
         if (msg.contains(" ")) {

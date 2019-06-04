@@ -5,8 +5,8 @@ import java.net.UnknownHostException;
 
 public class Main {
 
-    public static void main(String[] args) {
-        //String[] args = {"9090", "1", "192.168.48.1"};
+    public static void main(String[] args1) {
+        String[] args = {"9090", "1", "172.17.4.96"};
         if (1 < args.length && args.length < 4) {
             System.out.println(args[0]);
             int portNr = Integer.parseInt(args[0]);

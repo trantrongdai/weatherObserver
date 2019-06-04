@@ -40,8 +40,8 @@ public class WeatherStationSubject implements Subject {
 		this.weatherReport = weatherReport;
 	}
 	@Override
-	public void registerWeatherServer(WeatherServer weatherReport) {
-		weatherServers.add(weatherReport);
+	public void registerWeatherServer(WeatherServer weatherServer) {
+		weatherServers.add(weatherServer);
 	}
 	@Override
 	public void removeWeatherServer(WeatherServer weatherServer) {
