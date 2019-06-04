@@ -1,5 +1,8 @@
 package com.thrift.service2;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TSimpleServer;
@@ -20,7 +23,7 @@ import com.thrift.service2.WeatherServiceImpl;
 
 public class WeatherServiceServer {
 	private TServer server;
-	public void start(int port) throws TTransportException{
+	public void start(int port) throws TTransportException, UnknownHostException{
 		TServerTransport serverTransport = new TServerSocket(port);
 		 server = new TSimpleServer(new TServer.Args(serverTransport)
 		            .processor(new Weather.Processor<>(new WeatherServiceImpl() {
@@ -57,7 +60,7 @@ public class WeatherServiceServer {
 						}
 					})));
 		JacksonStreamingWriterAndReader.readerCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV);
-		System.out.println("Startting Server...");
+		System.out.println("Startting Server..." + InetAddress.getLocalHost().getHostAddress());
 		server.serve();
 		System.out.println("Done");
 	}
