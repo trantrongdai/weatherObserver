@@ -26,40 +26,8 @@ public class WeatherServiceServer {
 	public void start(int port) throws TTransportException, UnknownHostException{
 		TServerTransport serverTransport = new TServerSocket(port);
 		 server = new TSimpleServer(new TServer.Args(serverTransport)
-		            .processor(new Weather.Processor<>(new WeatherServiceImpl() {
-						
-						@Override
-						public boolean sendWarning(SystemWarning systemWarning, long userId) throws UnknownUserException, TException {
-							// TODO Auto-generated method stub
-							return false;
-						}
-						
-						@Override
-						public WeatherReport receiveForecastFor(long userId, String time)
-								throws UnknownUserException, DateException, TException {
-							// TODO Auto-generated method stub
-							return null;
-						}
-						
-						@Override
-						public boolean logout(long sessionToken) throws UnknownUserException, TException {
-							// TODO Auto-generated method stub
-							return false;
-						}
-						
-						@Override
-						public long login(Location location) throws LocationException, TException {
-							// TODO Auto-generated method stub
-							return 0;
-						}
-						
-						@Override
-						public WeatherWarning checkWeatherWarnings(long userId) throws UnknownUserException, TException {
-							// TODO Auto-generated method stub
-							return null;
-						}
-					})));
-		JacksonStreamingWriterAndReader.readerCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV);
+		            .processor(new Weather.Processor<>(new WeatherServiceImpl() {})));
+		//JacksonStreamingWriterAndReader.readerCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV);
 		System.out.println("Startting Server..." + " Port : " + port + " IP: "+ InetAddress.getLocalHost().getHostAddress());
 		server.serve();
 		System.out.println("Done");
