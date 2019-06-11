@@ -29,7 +29,14 @@ public class WetterStation {
     /** weather server port */
     private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9901;
     /** List of weather server ip */
-    private static final String[] WEATHER_SERVER_IPS = { "172.17.4.96" };
+    private static final String[] WEATHER_SERVER_IPS = { "192.168.48.1" };
+    /** sensor name */
+    private static final String TEMPERATUR = "Temperatur";
+    private static final String LUFT_FEUCHTIG_KEIT = "Luftfeuchtigkeit"; 
+    private static final String WIND_GESCHWINDIG_KEIT = "Windgeschwindigkeit"; 
+    private static final String REGEN = "Regen";
+    
+   
     /** Weather station subject to notify weather data to all weather server */
     // for Demo
     //private WeatherStationSubject weatherStationSubject = new WeatherStationSubject();
@@ -44,6 +51,7 @@ public class WetterStation {
 
     private ServerSocket serverSocket;
     private boolean running = true;
+    
 
     public static List<String> temperaturList = new ArrayList<>();
     public static List<String> luftfeuchtigkeitList = new ArrayList<>();
@@ -77,12 +85,16 @@ public class WetterStation {
             String data = new String(packet.getData(), 0, packet.getLength());
             System.out.printf("IP: %s | Port: %d | %s\n", packet.getAddress(), packet.getPort(), data);
             sensorToList(data);
-            notifyAllWeatherServe();
+            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+            notifyAllWeatherServe(data);
         }
     }
+    private String getSensorValue(String sensorData) {
+    	 String parts[] = sensorData.split(" ", 4);
+    	 return parts[2];
+    }
     // Code Notify hier
-    private void notifyAllWeatherServe() throws InvalidOperationException, TException, UnknownHostException {
-    	weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+    private void notifyAllWeatherServe(String data) throws InvalidOperationException, TException, UnknownHostException {
     	 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
          Date date = new Date();
          localhost = InetAddress.getLocalHost();
@@ -91,6 +103,28 @@ public class WetterStation {
          Report report = Report.SNOW;
          weatherReport.setLocation(location);
          weatherReport.setReport(report);
+         ////// Set Weather Report Data
+         
+         String sensorData = null;
+         if (data.contains(" ")) {
+        	 if (data.contains(TEMPERATUR)) {
+        		 sensorData = data.replace(TEMPERATUR, "");
+        		 weatherReport.setTemperature(Double.parseDouble(getSensorValue(sensorData)));
+             }else if (data.contains(LUFT_FEUCHTIG_KEIT)) {
+            	 sensorData = data.replace(LUFT_FEUCHTIG_KEIT, "");
+            	 weatherReport.setHumidity((byte)Integer.parseInt(getSensorValue(sensorData)));
+             } else if (data.contains(WIND_GESCHWINDIG_KEIT)) {
+            	 sensorData = data.replace(WIND_GESCHWINDIG_KEIT, "");
+            	 weatherReport.setWindStrength((byte)Integer.parseInt(getSensorValue(sensorData)));
+             }else {
+            	 sensorData = data.replace(WIND_GESCHWINDIG_KEIT, "");
+            	 weatherReport.setRainfall(Double.parseDouble(getSensorValue(sensorData)));
+             }
+         }
+                  
+        
+         weatherReport.setAtmosphericpressure((short)2);
+         weatherReport.setWindDirection((byte)60);
          weatherReport.setDateTime(dateFormat.format(date));
          weatherStationSubject.setWeatherReport(weatherReport);
          (new Thread() {

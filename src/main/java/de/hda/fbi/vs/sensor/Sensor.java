@@ -48,7 +48,7 @@ public abstract class Sensor {
         changeRandom();
         socket.send(packet);
         TimeUnit.SECONDS.sleep(sleepTime);
-        message = typ.concat(" : ").concat(data).concat(unit);
+        message = typ.concat(" : ").concat(data).concat(" ").concat(unit);
         raw = message.getBytes();
         packet = new DatagramPacket(raw, raw.length, adress, portNr);
         System.out.println("Datenpacket gesendet: " + message);

@@ -17,6 +17,8 @@ public class JacksonStreamingWriterAndReader {
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
     public static final String PATH_FILE_CSV = "result.csv";
+    public static final String PATH_FILE_CSV_1 = "result1.csv";
+    public static final String PATH_FILE_CSV_2 = "result2.csv"; 
     // CSV file header
     private static final String FILE_HEADER = "Report,locationID,name,latitude,longtitude,description,temperature,humidity,windStrength,rainfall,atmosphericpressure,windDirection,dateTime";
 	/**
@@ -113,7 +115,8 @@ public class JacksonStreamingWriterAndReader {
 	public static void  readerCsvFile(String fileName) {
 		BufferedReader reader;
 		try {
-			reader = Files.newBufferedReader(Paths.get(PATH_FILE_CSV));
+			//reader = Files.newBufferedReader(Paths.get(PATH_FILE_CSV));
+			reader = Files.newBufferedReader(Paths.get(fileName));
 			String line = reader.readLine();
 			while(line != null) {
 				System.out.println(line);

@@ -60,7 +60,7 @@ public class WeatherServiceServer {
 						}
 					})));
 		JacksonStreamingWriterAndReader.readerCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV);
-		System.out.println("Startting Server..." + InetAddress.getLocalHost().getHostAddress());
+		System.out.println("Startting Server..." + " Port : " + port + " IP: "+ InetAddress.getLocalHost().getHostAddress());
 		server.serve();
 		System.out.println("Done");
 	}

@@ -50,6 +50,11 @@ public class WeatherStationSubject implements Subject {
             weatherServers.remove(index);
         }
 	}
+	/**
+	 * Send Weather Report for all Server
+	 * @throws ReportException
+	 * @throws TException
+	 */
 	public void notifyWeatherServer() throws ReportException, TException{
 		for(int i = 0; i < weatherServers.size(); i++) {
 			WeatherServer weatherServer = weatherServers.get(i);
@@ -58,6 +63,7 @@ public class WeatherStationSubject implements Subject {
 			TProtocol protocol = new TBinaryProtocol(transport);
 			station = new Client(protocol);
 			station.sendWeatherReport(weatherReport, 0);
+			transport.close();
 		}
 	}
 }
