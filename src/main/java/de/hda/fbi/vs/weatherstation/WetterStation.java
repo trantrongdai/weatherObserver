@@ -52,7 +52,7 @@ public class WetterStation {
     private ServerSocket serverSocket;
     private boolean running = true;
     
-
+    
     public static List<String> temperaturList = new ArrayList<>();
     public static List<String> luftfeuchtigkeitList = new ArrayList<>();
     public static List<String> windgeschwindigkeitList = new ArrayList<>();
@@ -68,7 +68,7 @@ public class WetterStation {
             DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
 
             System.out.println("Wetterstation hat gestartet.");
-
+            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
             packetHandling(socket, packet);
             
 
@@ -85,7 +85,6 @@ public class WetterStation {
             String data = new String(packet.getData(), 0, packet.getLength());
             System.out.printf("IP: %s | Port: %d | %s\n", packet.getAddress(), packet.getPort(), data);
             sensorToList(data);
-            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
             notifyAllWeatherServe(data);
         }
     }
@@ -122,7 +121,12 @@ public class WetterStation {
              }
          }
                   
-        
+         /*
+         weatherReport.setTemperature(20.0);
+         weatherReport.setHumidity((byte)35);
+         weatherReport.setWindStrength((byte)25);
+         weatherReport.setRainfall(45.0);
+         */
          weatherReport.setAtmosphericpressure((short)2);
          weatherReport.setWindDirection((byte)60);
          weatherReport.setDateTime(dateFormat.format(date));
