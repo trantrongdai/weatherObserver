@@ -73,8 +73,9 @@ public class WetterStation {
             // Station register server with Port and IP of Server
             //weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
             //System.out.println(weatherStationSubject.login(location));
-            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.8.109", 9901));
             weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.8.106", 9901));
+            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.8.106", 9902));
+            //weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.8.109", 9901));
             
             packetHandling(socket, packet);
             
@@ -157,10 +158,10 @@ public class WetterStation {
              public void run() {
                  try {
                      weatherStationSubject.notifyWeatherServer();
-                 } catch (InvalidOperationException e) {
+                 } /* catch (InvalidOperationException e) {
                      // TODO Auto-generated catch block
                      e.printStackTrace();
-                 } catch (TException e) {
+                 }*/ catch (TException e) {
                      // TODO Auto-generated catch block
                      e.printStackTrace();
                  }

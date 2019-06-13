@@ -56,15 +56,23 @@ public class WeatherStationSubject implements Subject {
 	 * @throws ReportException
 	 * @throws TException
 	 */
-	public void notifyWeatherServer() throws ReportException, TException{
+	public void notifyWeatherServer() throws ReportException{
+		boolean done = false;
 		for(int i = 0; i < weatherServers.size(); i++) {
-			WeatherServer weatherServer = weatherServers.get(i);
-			transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
-			transport.open();
-			TProtocol protocol = new TBinaryProtocol(transport);
-			station = new Client(protocol);
-			station.sendWeatherReport(weatherReport, 0);
-			transport.close();
+			try {
+				WeatherServer weatherServer = weatherServers.get(i);
+				transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
+				transport.open();
+				TProtocol protocol = new TBinaryProtocol(transport);
+				station = new Client(protocol);
+				done = station.sendWeatherReport(weatherReport, 0);
+				transport.close();
+				if (done == true) {
+					break;
+				}
+			} catch(TException t) {
+				t.getStackTrace();
+			}
 		}
 	}
 	public long login(Location location) throws LocationException, TException {

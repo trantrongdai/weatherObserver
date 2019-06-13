@@ -10,5 +10,7 @@ public class ServerApplication2 {
 	public static void main(String[] args) throws TTransportException, UnknownHostException{
 		 WeatherServiceServer server = new WeatherServiceServer();
 	       server.start(9901);
+	      // WeatherServiceServer server = new WeatherServiceServer();
+	      // server.start(9902);
 	}
 }

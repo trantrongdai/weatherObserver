@@ -67,13 +67,19 @@ public abstract class WeatherServiceImpl implements com.thrift.generate2.weather
 		return null;
 	}
 	@Override
-	public boolean sendWeatherReport(WeatherReport report, long sessionToken) throws UnknownUserException, ReportException, DateException, LocationException, org.apache.thrift.TException {
-		System.out.println("size of list data before = " + weatherReportList.size());
-		weatherReportList.add(report);
-        System.out.println("size of list data after = " + weatherReportList.size());
-        JacksonStreamingWriterAndReader.WriterCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV, report);
-        displayWeatherReportList(weatherReportList);
-		return true;
+	public boolean sendWeatherReport(WeatherReport report, long sessionToken) {
+		boolean returnValue = true;
+		try {	
+			System.out.println("size of list data before = " + weatherReportList.size());
+			weatherReportList.add(report);
+	        System.out.println("size of list data after = " + weatherReportList.size());
+	        JacksonStreamingWriterAndReader.WriterCsvFile(JacksonStreamingWriterAndReader.PATH_FILE_CSV, report);
+	        displayWeatherReportList(weatherReportList);
+	        returnValue = true;
+		} catch (Exception e) {
+			returnValue = false;
+		}
+		return returnValue;
 	}
 	public void displayWeatherReportList(List<WeatherReport> weatherReportList) {
 		for(int i = 0; i< weatherReportList.size(); i++) {
