@@ -16,6 +16,7 @@ import org.apache.thrift.TException;
 
 import com.thrift.generate2.weatherService.Location;
 import com.thrift.generate2.weatherService.Report;
+import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generated.InvalidOperationException;
 import com.thrift.generated.WeatherData;
@@ -48,6 +49,8 @@ public class WetterStation {
     private WeatherReport weatherReport = new WeatherReport();
     /** Localhost address */
     private InetAddress localhost;
+    /** Location of Station */
+    private Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
 
     private ServerSocket serverSocket;
     private boolean running = true;
@@ -69,6 +72,7 @@ public class WetterStation {
             System.out.println("Wetterstation hat gestartet..." + "Port : " + portNr + " IP : " + InetAddress.getLocalHost().getHostAddress());
             // Station register server with Port and IP of Server
             //weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+            //System.out.println(weatherStationSubject.login(location));
             weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.48.1", 9901));
             
             packetHandling(socket, packet);
@@ -112,7 +116,6 @@ public class WetterStation {
          Date date = new Date();
          localhost = InetAddress.getLocalHost();
          System.out.println("Weather Station IP Address : " + (localhost.getHostAddress()).trim());
-         Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
          Report report = Report.SNOW;
          weatherReport.setLocation(location);
          ////// Set Weather Report Data
@@ -131,7 +134,7 @@ public class WetterStation {
             	 weatherReport.setWindStrength((byte)Integer.parseInt(getSensorValue(sensorData)));
             	 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              }else {
-            	 sensorData = data.replace(WIND_GESCHWINDIG_KEIT, "");
+            	 sensorData = data.replace(REGEN, "");
             	 weatherReport.setRainfall(Double.parseDouble(getSensorValue(sensorData)));
             	 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              }

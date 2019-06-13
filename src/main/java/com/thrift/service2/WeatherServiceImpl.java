@@ -1,7 +1,10 @@
 package com.thrift.service2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.thrift.TException;
 
@@ -14,10 +17,12 @@ import com.thrift.generate2.weatherService.UnknownUserException;
 import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generate2.weatherService.WeatherWarning;
 import com.thrift.json.JacksonStreamingWriterAndReader;
+import java.net.*;
 
 public abstract class WeatherServiceImpl implements com.thrift.generate2.weatherService.Weather.Iface  {
 	
 	public static List<WeatherReport> weatherReportList = new ArrayList<WeatherReport>();
+	private static final Map<Object, Long> locations = new IdentityHashMap<Object, Long>();
 	
 	@Override
 	public boolean sendWarning(SystemWarning systemWarning, long userId) throws UnknownUserException, TException {
@@ -41,7 +46,19 @@ public abstract class WeatherServiceImpl implements com.thrift.generate2.weather
 	@Override
 	public long login(Location location) throws LocationException, TException {
 		// TODO Auto-generated method stub
-		return 0;
+		if(location == null) {
+	           return 0;
+		}	
+	     /** Map from ObjectEntry to the objects corresponding ID*/
+	     Map<Location, Long> locations = new HashMap<Location, Long>();
+	     long nextSessionTockenId = System.currentTimeMillis();
+	     /** get Session Tocken if locaton exit or create neu session Tocken when location not exit*/
+	     Long sessionTocken = locations.get(location);
+	     if(sessionTocken == null) {
+	    	 locations.put(location, sessionTocken = nextSessionTockenId++);
+	    	 return sessionTocken;
+	     }
+	     return 0;
 	}
 	
 	@Override

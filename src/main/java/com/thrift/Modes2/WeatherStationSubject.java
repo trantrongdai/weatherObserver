@@ -10,6 +10,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 import com.thrift.generate2.weatherService.Location;
+import com.thrift.generate2.weatherService.LocationException;
 import com.thrift.generate2.weatherService.ReportException;
 import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.Weather.Client;
@@ -65,5 +66,8 @@ public class WeatherStationSubject implements Subject {
 			station.sendWeatherReport(weatherReport, 0);
 			transport.close();
 		}
+	}
+	public long login(Location location) throws LocationException, TException {
+		return station.login(location);
 	}
 }
