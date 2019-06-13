@@ -66,9 +66,11 @@ public class WetterStation {
         try {
             DatagramSocket socket = new DatagramSocket(portNr);
             DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-
-            System.out.println("Wetterstation hat gestartet.");
-            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+            System.out.println("Wetterstation hat gestartet..." + "Port : " + portNr + " IP : " + InetAddress.getLocalHost().getHostAddress());
+            // Station register server with Port and IP of Server
+            //weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
+            weatherStationSubject.registerWeatherServer(new com.thrift.Modes2.WeatherServer("192.168.48.1", 9901));
+            
             packetHandling(socket, packet);
             
 
@@ -92,6 +94,18 @@ public class WetterStation {
     	 String parts[] = sensorData.split(" ", 4);
     	 return parts[2];
     }
+    
+    private Report reportDependSensor(double sensorData) {
+    	if (sensorData >= 0 && sensorData < 5) {
+    		return Report.SNOW;
+    	} else if( sensorData >= 5 && sensorData < 15) {
+    		return Report.RAINY;
+    	} else if(sensorData >= 15 && sensorData < 25) {
+    		return Report.CLOUDY;
+    	} else {
+    		return Report.SUNNY;
+		}
+    }
     // Code Notify hier
     private void notifyAllWeatherServe(String data) throws InvalidOperationException, TException, UnknownHostException {
     	 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -101,23 +115,25 @@ public class WetterStation {
          Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
          Report report = Report.SNOW;
          weatherReport.setLocation(location);
-         weatherReport.setReport(report);
          ////// Set Weather Report Data
-         
          String sensorData = null;
          if (data.contains(" ")) {
         	 if (data.contains(TEMPERATUR)) {
         		 sensorData = data.replace(TEMPERATUR, "");
         		 weatherReport.setTemperature(Double.parseDouble(getSensorValue(sensorData)));
+        		 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              }else if (data.contains(LUFT_FEUCHTIG_KEIT)) {
             	 sensorData = data.replace(LUFT_FEUCHTIG_KEIT, "");
             	 weatherReport.setHumidity((byte)Integer.parseInt(getSensorValue(sensorData)));
+            	 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              } else if (data.contains(WIND_GESCHWINDIG_KEIT)) {
             	 sensorData = data.replace(WIND_GESCHWINDIG_KEIT, "");
             	 weatherReport.setWindStrength((byte)Integer.parseInt(getSensorValue(sensorData)));
+            	 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              }else {
             	 sensorData = data.replace(WIND_GESCHWINDIG_KEIT, "");
             	 weatherReport.setRainfall(Double.parseDouble(getSensorValue(sensorData)));
+            	 report = reportDependSensor(Double.parseDouble(getSensorValue(sensorData)));
              }
          }
                   
@@ -127,6 +143,7 @@ public class WetterStation {
          weatherReport.setWindStrength((byte)25);
          weatherReport.setRainfall(45.0);
          */
+         weatherReport.setReport(report);
          weatherReport.setAtmosphericpressure((short)2);
          weatherReport.setWindDirection((byte)60);
          weatherReport.setDateTime(dateFormat.format(date));

@@ -6,7 +6,12 @@ import java.net.UnknownHostException;
 public class Main {
 
     public static void main(String[] args1) {
+    	
+    	// Sensor Send Data to Station  with Port - Sensor Type - IP of Station
         String[] args = {"9090", "1", "192.168.48.1"};
+        //String[] args = {"9090", "2", "192.168.48.1"};
+        //String[] args = {"9090", "3", "192.168.48.1"};
+        //String[] args = {"9090", "4", "192.168.48.1"};
         if (1 < args.length && args.length < 4) {
             System.out.println(args[0]);
             int portNr = Integer.parseInt(args[0]);
