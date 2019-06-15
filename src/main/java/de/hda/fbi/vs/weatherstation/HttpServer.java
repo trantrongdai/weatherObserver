@@ -19,7 +19,7 @@ public class HttpServer extends Thread {
 
   public HttpServer() throws IOException {
     serverSocket = new ServerSocket(PORTNR);
-    System.out.println("Started the TCP socket server at port " + PORTNR);
+    System.out.println("[+] Started the TCP socket server at port " + PORTNR);
   }
 
   @Override

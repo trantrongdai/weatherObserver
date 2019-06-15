@@ -17,7 +17,7 @@ import com.thrift.generate2.weatherService.WeatherReport;
 public class ClientApplication {
 	public static void main(String[] args) throws UnknownHostException, TException {
 		WeatherStationSubject weatherStation = new WeatherStationSubject();
-		
+		/*
 		InetAddress localhost = InetAddress.getLocalHost();
 		weatherStation.registerWeatherServer(new WeatherServer("192.168.8.109", 9901));
 		//weatherStation.registerWeatherServer(new WeatherServer("169.254.16.88", 9901));
@@ -39,13 +39,13 @@ public class ClientApplication {
         weatherReport.setDateTime(dateFormat.format(date));
         weatherStation.setWeatherReport(weatherReport);
         weatherStation.notifyWeatherServer();
-        
+        */
 		
 		/////////////////////
-		/*
+		
 		Location location = new Location((byte)20, "Darmstadt", 49.863, 8.64);
 		weatherStation.login(location);
-		*/
+		
 	}
 
 }

@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 
 import org.apache.thrift.transport.TTransportException;
 
+import com.thrift.json.JacksonStreamingWriterAndReader;
 import com.thrift.service2.WeatherServiceServer;
 
 public class ServerApplication2 {

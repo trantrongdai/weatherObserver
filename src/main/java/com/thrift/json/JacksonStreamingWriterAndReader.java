@@ -25,10 +25,11 @@ public class JacksonStreamingWriterAndReader {
 	 */
     public static void  WriterCsvFile(String fileName, WeatherReport weatherReport) {
 		try {
-			File file = new File(fileName);
-			FileWriter fileWriter = new FileWriter(fileName, true);
+			FileWriter fileWriter;
+			File file = new File(System.getProperty("user.dir") + "\\" + fileName);
 			
-			if(file.exists()) {
+			if(file.getAbsoluteFile().exists()) {
+				fileWriter = new FileWriter(fileName, true);
 				fileWriter.append(weatherReport.getReport().toString());
 	            fileWriter.append(COMMA_DELIMITER);
 	            fileWriter.append(String.valueOf(weatherReport.getLocation().getLocationID()));
@@ -56,9 +57,10 @@ public class JacksonStreamingWriterAndReader {
 	            fileWriter.append(weatherReport.getDateTime());
 	            fileWriter.append(COMMA_DELIMITER);
 	            fileWriter.append(NEW_LINE_SEPARATOR);
-	            System.out.println("CSV file was put successfully !!!");
+	           // System.out.println("CSV file was put successfully !!!");
 			} else {
-			
+				fileWriter = new FileWriter(fileName, true);
+				System.out.println("NOT EXISTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				// Write the CSV file header
 	            fileWriter.append(FILE_HEADER);
 	            // Add a new line separator after the header
@@ -90,7 +92,7 @@ public class JacksonStreamingWriterAndReader {
 	            fileWriter.append(weatherReport.getDateTime());
 	            fileWriter.append(COMMA_DELIMITER);
 	            fileWriter.append(NEW_LINE_SEPARATOR);
-	            System.out.println("CSV file was created successfully !!!");
+	            //System.out.println("CSV file was created successfully !!!");
 			}
 			 try {
 	                fileWriter.flush();
