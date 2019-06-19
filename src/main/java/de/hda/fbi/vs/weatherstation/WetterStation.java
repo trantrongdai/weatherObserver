@@ -16,13 +16,12 @@ import org.apache.thrift.TException;
 
 import com.thrift.generate2.weatherService.Location;
 import com.thrift.generate2.weatherService.Report;
+import com.thrift.generate2.weatherService.SystemWarning;
 import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.Weather.AsyncProcessor.logout;
 import com.thrift.generate2.weatherService.WeatherReport;
 import com.thrift.generated.InvalidOperationException;
 import com.thrift.generated.WeatherData;
-import com.thrift.models.WeatherServer;
-import com.thrift.models.WeatherStationSubject;
 
 public class WetterStation {
 
@@ -32,7 +31,7 @@ public class WetterStation {
 	/** weather server port */
 	private static final int PORT_NUMBER_OF_WEATHER_SERVER = 9901;
 	/** List of weather server ip */
-	private static final String[] WEATHER_SERVER_IPS = { "127.0.0.1" };
+	private static final String WEATHER_SERVER_IP =  "127.0.0.1" ;
 	/** sensor name */
 	private static final String TEMPERATUR = "Temperatur";
 	private static final String LUFT_FEUCHTIG_KEIT = "Luftfeuchtigkeit";
@@ -63,7 +62,7 @@ public class WetterStation {
 	public static List<String> regenList = new ArrayList<>();
 	public static List<String> alle = new ArrayList<>();
 
-	public void WetterStation() {
+	public WetterStation() {
 	}
 
 	public void runWetterStation() throws InvalidOperationException, TException {
@@ -72,17 +71,15 @@ public class WetterStation {
 			DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
 			System.out.println("[+] Weather station started on port " + portNr);
 			// Station register server with Port and IP of Server
-			// weatherStationSubject.registerWeatherServer(new
-			// com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0],
-			// PORT_NUMBER_OF_WEATHER_SERVER));
 			// System.out.println(weatherStationSubject.login(location));
 			weatherStationSubject
-					.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IPS[0], 9901));
-			// weatherStationSubject.registerWeatherServer(new
-			// com.thrift.Modes2.WeatherServer("192.168.8.106", 9902));
-			// weatherStationSubject.registerWeatherServer(new
-			// com.thrift.Modes2.WeatherServer("192.168.8.109", 9901));
-
+					.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9901));
+			/*
+			weatherStationSubject
+			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9902));
+			weatherStationSubject
+			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9903));
+			*/
 			weatherStationSubject.login(location);
 			loggedIn = true;
 
@@ -100,7 +97,7 @@ public class WetterStation {
 			String data = new String(packet.getData(), 0, packet.getLength());
 			 System.out.println("[+] Received sensor data: " + data);
 			sensorToList(data);
-			if (loggedIn && alle.size() > 1) {
+			if (loggedIn && alle.size() > 2) {
 				weatherStationSubject.logout();
 				loggedIn = false;
 			}
@@ -125,7 +122,14 @@ public class WetterStation {
 		}
 	}
 
-	// Code Notify hier
+	/**
+	 * Send weather report to only server on list registered server of weather station with period of server.
+	 * when send weather report to 1. server error(server 1. die) resend to 2. server ...
+	 * @param data
+	 * @throws InvalidOperationException
+	 * @throws TException
+	 * @throws UnknownHostException
+	 */
 	private void notifyAllWeatherServe(String data) throws InvalidOperationException, TException, UnknownHostException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
@@ -167,7 +171,20 @@ public class WetterStation {
 			}
 		}).start();
 	}
-
+	
+	/**
+	 * send Warning to all server
+	 * @param systemWarning
+	 */
+	private void sendSystemWarning(SystemWarning systemWarning) {
+		weatherStationSubject.setSystemWarning(systemWarning);
+		(new Thread() {
+			@Override
+			public void run() {
+				weatherStationSubject.sendWarning();
+			}
+		}).start();
+	}
 	// Demo
 	/*
 	 * private void notifyAllWeatherServer() throws InvalidOperationException,
@@ -189,6 +206,11 @@ public class WetterStation {
 	 * (InvalidOperationException e) { // TODO Auto-generated catch block
 	 * e.printStackTrace(); } catch (TException e) { // TODO Auto-generated catch
 	 * block e.printStackTrace(); } } }).start(); }
+	 */
+	
+	/**
+	 * store data of sensor each list sensor type
+	 * @param msg
 	 */
 	private void sensorToList(String msg) {
 		String msgToAdd = null;
