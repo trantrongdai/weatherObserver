@@ -1,19 +1,13 @@
 package com.thrift.app2;
-
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.thrift.TException;
-
 import com.thrift.Modes2.WeatherServer;
 import com.thrift.Modes2.WeatherStationSubject;
 import com.thrift.generate2.weatherService.Location;
 import com.thrift.generate2.weatherService.Report;
 import com.thrift.generate2.weatherService.SystemWarning;
 import com.thrift.generate2.weatherService.WeatherReport;
+import com.thrift.generate2.weatherService.WeatherWarning;
 
 public class ClientApplication {
 	public static void main(String[] args) throws UnknownHostException, TException {
@@ -64,6 +58,16 @@ public class ClientApplication {
 		System.out.println("[+] Station receive forecast weather report: " + forecastWeatherReport);
 		System.out.println("[+] Station receive forecast weather report: " + forecastWeatherReport1);
 		*/
+		
+		////////////////////////////////////////
+		
+		weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9901));
+		weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9902));
+		weatherStation.login(location);
+		WeatherWarning weatherWarning = weatherStation.checkWeatherWarnings(weatherStation.getListSessionToken().get(0));
+		WeatherWarning weatherWarning1 = weatherStation.checkWeatherWarnings(12345);
+		System.out.println("[+] Station receive weather warning : " + weatherWarning);
+		System.out.println("[+] Station receive weather warning : " + weatherWarning1);
 	}
 
 }

@@ -18,6 +18,7 @@ import com.thrift.generate2.weatherService.UnknownUserException;
 import com.thrift.generate2.weatherService.Weather;
 import com.thrift.generate2.weatherService.Weather.Client;
 import com.thrift.generate2.weatherService.WeatherReport;
+import com.thrift.generate2.weatherService.WeatherWarning;
 
 /**
  * save weather data. and notify for all server
@@ -201,6 +202,36 @@ public class WeatherStationSubject implements Subject {
 			}catch (UnknownUserException e) {
 				System.out.println("[-] (receve) User Id: " + userId + " not valid" );
 				System.out.println("[-] (receve) Please Login oder validate user id to Server_" + i);
+				transport.close();
+			} 
+			catch (TException t) {
+				t.getStackTrace();
+				transport.close();
+			}
+		}
+		return null;
+	}
+	public WeatherWarning checkWeatherWarnings(long userId) {
+		for(int i = 0; i < weatherServers.size(); i++) {
+			System.out.println("[+] Send check weather warning to server: " + i);
+			try {
+				WeatherWarning weatherWarning;
+				WeatherServer weatherServer = weatherServers.get(i);
+				transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
+				transport.open();
+				TProtocol protocol = new TBinaryProtocol(transport);
+				station = new Client(protocol);
+				long sessionToken = sessionTokenMapping.containsKey(weatherServer)
+						? sessionTokenMapping.get(weatherServer)
+						: -1;
+						weatherWarning = station.checkWeatherWarnings(userId);
+				transport.close();
+				if (weatherWarning != null) {
+					return weatherWarning;
+				}
+			}catch (UnknownUserException e) {
+				System.out.println("[-] (Weather warning) User Id: " + userId + " not valid" );
+				System.out.println("[-] (Weather warning) Please Login oder validate user id to Server_" + i);
 				transport.close();
 			} 
 			catch (TException t) {

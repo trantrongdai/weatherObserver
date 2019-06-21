@@ -10,7 +10,6 @@ import com.thrift.service2.WeatherServiceImpl;
 
 public class WeatherServiceServer {
 	private TServer server;
-
 	public void start(int port) throws TTransportException, UnknownHostException {
 		TServerTransport serverTransport = new TServerSocket(port);
 		server = new TSimpleServer(
