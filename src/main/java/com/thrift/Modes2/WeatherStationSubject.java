@@ -141,7 +141,7 @@ public class WeatherStationSubject implements Subject {
 		System.out.println("[+] Befor send list weather report: " + listSendErrorWeatherReport.size());
 		if (listSendErrorWeatherReport.size() != 0) {
 			for (WeatherReport weatherRepo : listSendErrorWeatherReport) {
-				System.out.println("[+] sending ... " + weatherRepo.getDateTime());
+				System.out.println("[+] sending ... " + weatherRepo.dateTime);
 				////
 				/*
 				boolean done = false;
@@ -174,7 +174,7 @@ public class WeatherStationSubject implements Subject {
 				*/
 			}
 		}
-		System.out.println("[+] After send list weather report: " + listSendErrorWeatherReport.size());
+		//System.out.println("[+] After send list weather report: " + listSendErrorWeatherReport.size());
 	}
 
 	/**

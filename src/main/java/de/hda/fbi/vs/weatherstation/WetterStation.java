@@ -77,11 +77,12 @@ public class WetterStation {
 			
 			weatherStationSubject
 			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9902));
-			/*
+			
 			weatherStationSubject
 			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9903));
-			*/
+			
 			weatherStationSubject.login(location);
+			
 			loggedIn = true;
 
 			packetHandling(socket, packet);

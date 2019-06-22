@@ -8,10 +8,10 @@ public class Main {
     public static void main(String[] args1) {
     	
     	// Sensor Send Data to Station  with Port - Sensor Type - IP of Station
-        String[] args = {"9090", "1", "127.0.0.1"};
+        //String[] args = {"9090", "1", "127.0.0.1"};
         //String[] args = {"9090", "2", "127.0.0.1"};
         //String[] args = {"9090", "3", "127.0.0.1"};
-        //String[] args = {"9090", "4", "127.0.0.1"};
+        String[] args = {"9090", "4", "127.0.0.1"};
         if (1 < args.length && args.length < 4) {
             System.out.println("[+] Sensor started, sending to port " + args[0]);
             int portNr = Integer.parseInt(args[0]);
