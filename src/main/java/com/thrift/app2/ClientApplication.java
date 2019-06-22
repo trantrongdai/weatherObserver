@@ -1,5 +1,9 @@
 package com.thrift.app2;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.thrift.TException;
 import com.thrift.Modes2.WeatherServer;
 import com.thrift.Modes2.WeatherStationSubject;
@@ -17,24 +21,25 @@ public class ClientApplication {
 		// send weather report
 
 		/*
-		 * weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9901));
-		 * weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9902));
-		 * weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9903));
-		 * 
-		 * // Login after register server weatherStation.login(location);
-		 * 
-		 * WeatherReport weatherReport = new WeatherReport(); DateFormat dateFormat =
-		 * new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); Date date = new Date(); Report
-		 * report = Report.SNOW; weatherReport.setReport(report);
-		 * weatherReport.setLocation(location); weatherReport.setTemperature(20.0);
-		 * weatherReport.setHumidity((byte)35); weatherReport.setWindStrength((byte)25);
-		 * weatherReport.setRainfall(45.0);
-		 * weatherReport.setAtmosphericpressure((short)2);
-		 * weatherReport.setWindDirection((short)90);
-		 * weatherReport.setWindDirection((byte)60);
-		 * weatherReport.setDateTime(dateFormat.format(date));
-		 * weatherStation.setWeatherReport(weatherReport);
-		 * weatherStation.notifyWeatherServer();
+		  weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9901));
+		  //weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9902));
+		  //weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9903));
+		  
+		  // Login after register server weatherStation.login(location);
+		  weatherStation.login(location);
+		  WeatherReport weatherReport = new WeatherReport(); DateFormat dateFormat =
+		  new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); 
+		  Date date = new Date(); 
+		  Report report = Report.SNOW; weatherReport.setReport(report);
+		  weatherReport.setLocation(location); weatherReport.setTemperature(20.0);
+		  weatherReport.setHumidity((byte)35); weatherReport.setWindStrength((byte)25);
+		  weatherReport.setRainfall(45.0);
+		  weatherReport.setAtmosphericpressure((short)2);
+		  weatherReport.setWindDirection((short)90);
+		  weatherReport.setWindDirection((byte)60);
+		  weatherReport.setDateTime(dateFormat.format(date));
+		  weatherStation.setWeatherReport(weatherReport);
+		  weatherStation.notifyWeatherServer();
 		 */
 		/////////////////////
 		// send warning
@@ -65,9 +70,16 @@ public class ClientApplication {
 		weatherStation.registerWeatherServer(new WeatherServer("127.0.0.1", 9902));
 		weatherStation.login(location);
 		WeatherWarning weatherWarning = weatherStation.checkWeatherWarnings(weatherStation.getListSessionToken().get(0));
-		WeatherWarning weatherWarning1 = weatherStation.checkWeatherWarnings(12345);
+		//WeatherWarning weatherWarning1 = weatherStation.checkWeatherWarnings(12345);
 		System.out.println("[+] Station receive weather warning : " + weatherWarning);
-		System.out.println("[+] Station receive weather warning : " + weatherWarning1);
+		//System.out.println("[+] Station receive weather warning : " + weatherWarning1);
+		weatherStation.logout();
+		WeatherWarning weatherWarning2 = weatherStation.checkWeatherWarnings(weatherStation.getListSessionToken().get(0));
+		System.out.println("[+] Station receive weather warning : " + weatherWarning2);
+		weatherStation.login(location);
+		WeatherWarning weatherWarning3 = weatherStation.checkWeatherWarnings(weatherStation.getListSessionToken().get(0));
+		System.out.println("[+] Station receive weather warning : " + weatherWarning3);
+		
 	}
 
 }

@@ -12,6 +12,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 import com.thrift.generate2.weatherService.Location;
+import com.thrift.generate2.weatherService.LocationException;
 import com.thrift.generate2.weatherService.ReportException;
 import com.thrift.generate2.weatherService.SystemWarning;
 import com.thrift.generate2.weatherService.UnknownUserException;
@@ -33,7 +34,21 @@ public class WeatherStationSubject implements Subject {
 	private WeatherReport weatherReport;
 	private SystemWarning systemWarning;
 	private static final Map<WeatherServer, Long> sessionTokenMapping = new HashMap<WeatherServer, Long>();
-	// private Location location;
+	private Location locationWeather;
+	private List<WeatherReport> listSendErrorWeatherReport = new ArrayList<WeatherReport>();
+	private boolean resendError = false;
+
+	public void setReSendError(boolean resendError) {
+		this.resendError = resendError;
+		if (resendError == true) {
+			reSendErrorWeatherReport();
+		}
+	}
+
+	public boolean getResendError() {
+		return this.resendError;
+	}
+
 	public WeatherStationSubject() {
 		this.weatherServers = new ArrayList<>();
 	}
@@ -45,15 +60,16 @@ public class WeatherStationSubject implements Subject {
 	public void setWeatherReport(WeatherReport weatherReport) {
 		this.weatherReport = weatherReport;
 	}
+
 	public void setSystemWarning(SystemWarning systemWarning) {
 		this.systemWarning = systemWarning;
 	}
+
 	public ArrayList<Long> getListSessionToken() {
 		ArrayList<Long> sessionTokenList = new ArrayList<Long>();
-		for(int i = 0; i < weatherServers.size(); i++) {
+		for (int i = 0; i < weatherServers.size(); i++) {
 			WeatherServer weatherServer = weatherServers.get(i);
-			long sessionToken = sessionTokenMapping.containsKey(weatherServer)
-					? sessionTokenMapping.get(weatherServer)
+			long sessionToken = sessionTokenMapping.containsKey(weatherServer) ? sessionTokenMapping.get(weatherServer)
 					: -1;
 			sessionTokenList.add(sessionToken);
 		}
@@ -76,14 +92,16 @@ public class WeatherStationSubject implements Subject {
 	/**
 	 * Send Weather Report for all Server
 	 * 
+	 * @throws LocationException
+	 * 
 	 * @throws ReportException
 	 * @throws TException
 	 */
-	public void notifyWeatherServer(){
+	public boolean notifyWeatherServer() throws LocationException, TException {
 		boolean done = false;
 		for (int i = 0; i < weatherServers.size(); i++) {
+			WeatherServer weatherServer = weatherServers.get(i);
 			try {
-				WeatherServer weatherServer = weatherServers.get(i);
 				transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
 				transport.open();
 				TProtocol protocol = new TBinaryProtocol(transport);
@@ -97,22 +115,74 @@ public class WeatherStationSubject implements Subject {
 				if (done == true) {
 					break;
 				}
-
 			} catch (UnknownUserException e) {
 				// TODO: handle exception
 				System.out.println("[-] Please Login to Server_" + i);
 				transport.close();
+				relogin(weatherServer, this.locationWeather);
 			} catch (TException e) {
 				transport.close();
 			}
 		}
+		if (done == false) {
+			listSendErrorWeatherReport.add(getCurrentWeatherReport());
+			System.out.println("[-] Add error weather report");
+		}
+		return done;
 	}
-	
+
+	/**
+	 * re send weather report Error when one in all server active
+	 * 
+	 * @return
+	 */
+	public void reSendErrorWeatherReport() {
+		// System.out.println("[+] Sending list weather report error!!!");
+		System.out.println("[+] Befor send list weather report: " + listSendErrorWeatherReport.size());
+		if (listSendErrorWeatherReport.size() != 0) {
+			for (WeatherReport weatherRepo : listSendErrorWeatherReport) {
+				System.out.println("[+] sending ... " + weatherRepo.getDateTime());
+				////
+				/*
+				boolean done = false;
+				for (int i = 0; i < weatherServers.size(); i++) {
+					WeatherServer weatherServer = weatherServers.get(i);
+					try {
+						transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
+						transport.open();
+						TProtocol protocol = new TBinaryProtocol(transport);
+						station = new Client(protocol);
+
+						long sessionToken = sessionTokenMapping.containsKey(weatherServer)
+								? sessionTokenMapping.get(weatherServer)
+								: -1;
+						System.out.println("[+] sending ... " + j + " " + listSendErrorWeatherReport.get(j).getDateTime());
+						done = station.sendWeatherReport(listSendErrorWeatherReport.get(j), sessionToken);
+						transport.close();
+						if (done == true) {
+							listSendErrorWeatherReport.remove(j);
+							break;
+						}
+					} catch (UnknownUserException e) {
+						// TODO: handle exception
+						System.out.println("[-] Please Login to Server_" + i);
+						transport.close();
+					} catch (TException e) {
+						transport.close();
+					}
+				}
+				*/
+			}
+		}
+		System.out.println("[+] After send list weather report: " + listSendErrorWeatherReport.size());
+	}
+
 	/**
 	 * 
 	 * @param location
 	 */
 	public void login(Location location) {
+		this.locationWeather = location;
 		for (int i = 0; i < weatherServers.size(); i++) {
 			try {
 				WeatherServer weatherServer = weatherServers.get(i);
@@ -145,12 +215,13 @@ public class WeatherStationSubject implements Subject {
 			}
 		}
 	}
-	public void sendWarning() {
-		for(int i = 0; i < weatherServers.size(); i++) {
+
+	public void sendWarning() throws LocationException, TException {
+		for (int i = 0; i < weatherServers.size(); i++) {
 			boolean done = false;
 			System.out.println("[+] Send Warning to server: " + i);
+			WeatherServer weatherServer = weatherServers.get(i);
 			try {
-				WeatherServer weatherServer = weatherServers.get(i);
 				transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
 				transport.open();
 				TProtocol protocol = new TBinaryProtocol(transport);
@@ -163,56 +234,54 @@ public class WeatherStationSubject implements Subject {
 				if (done == true) {
 					break;
 				}
-			}catch (UnknownUserException e) {
+			} catch (UnknownUserException e) {
 				System.out.println("[-] Please Login to Server_" + i);
 				transport.close();
-			} 
-			catch (TException t) {
+				relogin(weatherServer, this.locationWeather);
+			} catch (TException t) {
 				t.getStackTrace();
 				transport.close();
 			}
 		}
 	}
-	
+
 	/**
-	 * receiver fore cast weather report
-	 * throws Unknow exception when userId not valid or not login
+	 * receiver fore cast weather report throws Unknow exception when userId not
+	 * valid or not login
+	 * 
 	 * @param userId
 	 * @param time
 	 * @return
 	 */
 	public WeatherReport receiveForecastFor(long userId, String time) {
-		for(int i = 0; i < weatherServers.size(); i++) {
+		for (int i = 0; i < weatherServers.size(); i++) {
 			System.out.println("[+] Send forecast to server: " + i);
+			WeatherReport weatherReport = new WeatherReport();
 			try {
-				WeatherReport weatherReport = new WeatherReport();
 				WeatherServer weatherServer = weatherServers.get(i);
 				transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
 				transport.open();
 				TProtocol protocol = new TBinaryProtocol(transport);
 				station = new Client(protocol);
-				long sessionToken = sessionTokenMapping.containsKey(weatherServer)
-						? sessionTokenMapping.get(weatherServer)
-						: -1;
 				weatherReport = station.receiveForecastFor(userId, time);
 				transport.close();
 				if (weatherReport != null) {
 					return weatherReport;
 				}
-			}catch (UnknownUserException e) {
-				System.out.println("[-] (receve) User Id: " + userId + " not valid" );
+			} catch (UnknownUserException e) {
+				System.out.println("[-] (receve) User Id: " + userId + " not valid");
 				System.out.println("[-] (receve) Please Login oder validate user id to Server_" + i);
 				transport.close();
-			} 
-			catch (TException t) {
+			} catch (TException t) {
 				t.getStackTrace();
 				transport.close();
 			}
 		}
 		return null;
 	}
+
 	public WeatherWarning checkWeatherWarnings(long userId) {
-		for(int i = 0; i < weatherServers.size(); i++) {
+		for (int i = 0; i < weatherServers.size(); i++) {
 			System.out.println("[+] Send check weather warning to server: " + i);
 			try {
 				WeatherWarning weatherWarning;
@@ -224,24 +293,61 @@ public class WeatherStationSubject implements Subject {
 				long sessionToken = sessionTokenMapping.containsKey(weatherServer)
 						? sessionTokenMapping.get(weatherServer)
 						: -1;
-						weatherWarning = station.checkWeatherWarnings(userId);
+				weatherWarning = station.checkWeatherWarnings(userId);
 				transport.close();
 				if (weatherWarning != null) {
 					return weatherWarning;
 				}
-			}catch (UnknownUserException e) {
-				System.out.println("[-] (Weather warning) User Id: " + userId + " not valid" );
+			} catch (UnknownUserException e) {
+				System.out.println("[-] (Weather warning) User Id: " + userId + " not valid");
 				System.out.println("[-] (Weather warning) Please Login oder validate user id to Server_" + i);
 				transport.close();
-			} 
-			catch (TException t) {
+			} catch (TException t) {
 				t.getStackTrace();
 				transport.close();
 			}
 		}
 		return null;
 	}
-	
-	
-	
+
+	/**
+	 * 
+	 * @param weatherServer
+	 * @param location
+	 * @throws TException
+	 * @throws LocationException
+	 */
+	public void relogin(WeatherServer weatherServer, Location location) throws LocationException, TException {
+		System.out.println("[+] Relogin to Server");
+		try {
+			transport = new TSocket(weatherServer.getIp(), weatherServer.getPort());
+			transport.open();
+			TProtocol protocol = new TBinaryProtocol(transport);
+			station = new Client(protocol);
+			// xoa weather server trong map, logout va xoa weather server + sessionToken
+			System.out.println("[+] Old session Token: " + sessionTokenMapping.get(weatherServer));
+			if (sessionTokenMapping.get(weatherServer) != null) {
+				// System.out.println("[+] Logout and Remove 0");
+				// station.logout(sessionTokenMapping.get(weatherServer));
+				sessionTokenMapping.remove(weatherServer);
+				System.out.println("[+] Remove weather server");
+			}
+			// tao login moi
+			long sessionToken = station.login(location);
+			sessionTokenMapping.put(weatherServer, sessionToken);
+			System.out.println("[+] New session token:" + sessionToken);
+			transport.close();
+		} catch (UnknownUserException u) {
+			// TODO: handle exception
+			// long sessionToken = station.login(location);
+			// sessionTokenMapping.put(weatherServer, sessionToken);
+			// System.out.println("[+] New session token:" + sessionToken);
+			// transport.close();
+		} catch (TException t) {
+			t.getStackTrace();
+			transport.close();
+		}
+		this.setReSendError(true);
+	}
+
 }

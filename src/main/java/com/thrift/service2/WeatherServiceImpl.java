@@ -163,5 +163,4 @@ public abstract class WeatherServiceImpl implements com.thrift.generate2.weather
 			System.out.println(weatherReportList.get(i).toString());
 		}
 	}
-
 }

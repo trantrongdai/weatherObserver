@@ -74,9 +74,10 @@ public class WetterStation {
 			// System.out.println(weatherStationSubject.login(location));
 			weatherStationSubject
 					.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9901));
-			/*
+			
 			weatherStationSubject
 			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9902));
+			/*
 			weatherStationSubject
 			.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9903));
 			*/
@@ -97,7 +98,7 @@ public class WetterStation {
 			String data = new String(packet.getData(), 0, packet.getLength());
 			 System.out.println("[+] Received sensor data: " + data);
 			sensorToList(data);
-			if (loggedIn && alle.size() > 2) {
+			if (loggedIn && alle.size() > 30) {
 				weatherStationSubject.logout();
 				loggedIn = false;
 			}
@@ -167,47 +168,15 @@ public class WetterStation {
 		(new Thread() {
 			@Override
 			public void run() {
-				weatherStationSubject.notifyWeatherServer();
+				try {
+					weatherStationSubject.notifyWeatherServer();
+				} catch (TException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}).start();
 	}
-	
-	/**
-	 * send Warning to all server
-	 * @param systemWarning
-	 */
-	private void sendSystemWarning(SystemWarning systemWarning) {
-		weatherStationSubject.setSystemWarning(systemWarning);
-		(new Thread() {
-			@Override
-			public void run() {
-				weatherStationSubject.sendWarning();
-			}
-		}).start();
-	}
-	// Demo
-	/*
-	 * private void notifyAllWeatherServer() throws InvalidOperationException,
-	 * TException, UnknownHostException {
-	 * 
-	 * weatherStationSubject.registerWeatherServer(new
-	 * WeatherServer(WEATHER_SERVER_IPS[0], PORT_NUMBER_OF_WEATHER_SERVER));
-	 * 
-	 * DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); Date
-	 * date = new Date(); localhost = InetAddress.getLocalHost();
-	 * System.out.println("Weather Station IP Address : " +
-	 * (localhost.getHostAddress()).trim());
-	 * weatherData.setStationIp(localhost.getHostAddress());
-	 * weatherData.setTime(dateFormat.format(date)); weatherData.setRain(false);
-	 * weatherStationSubject.setWeatherData(weatherData); (new Thread() {
-	 * 
-	 * @Override public void run() { try {
-	 * weatherStationSubject.notifyWeatherServer(); } catch
-	 * (InvalidOperationException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (TException e) { // TODO Auto-generated catch
-	 * block e.printStackTrace(); } } }).start(); }
-	 */
-	
 	/**
 	 * store data of sensor each list sensor type
 	 * @param msg

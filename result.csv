@@ -1,6 +1,7 @@
 Report,locationID,name,latitude,longtitude,description,temperature,humidity,windStrength,rainfall,atmosphericpressure,windDirection,dateTime
 
-SNOW,20,Darmstadt,49.863,8.64,null,20.0,35,25,45.0,2,60,2019/06/19 12:54:56,
-SNOW,20,Darmstadt,49.863,8.64,null,0.0,0,0,0.0,2,60,2019/06/19 12:57:30,
-SUNNY,20,Darmstadt,49.863,8.64,null,30.0,0,0,0.0,2,60,2019/06/19 12:57:35,
-SUNNY,20,Darmstadt,49.863,8.64,null,36.0,0,0,0.0,2,60,2019/06/19 12:57:40,
+
+CLOUDY,20,Darmstadt,49.863,8.64,null,18.0,0,0,0.0,2,60,2019/06/22 19:42:51,
+CLOUDY,20,Darmstadt,49.863,8.64,null,24.0,0,0,0.0,2,60,2019/06/22 19:43:21,
+CLOUDY,20,Darmstadt,49.863,8.64,null,17.0,0,0,0.0,2,60,2019/06/22 19:43:26,
+SUNNY,20,Darmstadt,49.863,8.64,null,34.0,0,0,0.0,2,60,2019/06/22 19:43:31,

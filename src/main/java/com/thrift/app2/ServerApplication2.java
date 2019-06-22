@@ -1,7 +1,6 @@
 package com.thrift.app2;
 
 import java.net.UnknownHostException;
-
 import org.apache.thrift.transport.TTransportException;
 import com.thrift.service2.WeatherServiceServer;
 
