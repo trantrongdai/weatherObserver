@@ -17,10 +17,10 @@ public class CliParameters {
     private String message = "";
     
     //////
-    private String temparatur = "0";
-    private String windGeschwindigkeit = "0";
-    private String regen = "0";
-    private String luftfeuchtigkeit = "0";
+    private String temparatur = "Temperatur : ";
+    private String windGeschwindigkeit = "Windgeschwindigkeit : ";
+    private String regen = "Regen : ";
+    private String luftfeuchtigkeit = "Luftfeuchtigkeit : ";
     /**
      * The static getter for the CLI parameters instance.
      *

@@ -51,7 +51,7 @@ public abstract class Sensor {
         message = typ.concat(" : ").concat(data).concat(" ").concat(unit);
         raw = message.getBytes();
         packet = new DatagramPacket(raw, raw.length, adress, portNr);
-        // System.out.println("Datenpacket gesendet: " + message);
+        //System.out.println("Datenpacket gesendet: " + message);
       }
 
     } catch (InterruptedException | IOException e) {

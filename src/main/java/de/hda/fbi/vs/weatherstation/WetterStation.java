@@ -61,7 +61,7 @@ public class WetterStation {
 	public static List<String> windgeschwindigkeitList = new ArrayList<>();
 	public static List<String> regenList = new ArrayList<>();
 	public static List<String> alle = new ArrayList<>();
-
+	private int loopMqtt = 0;
 	public WetterStation() {
 	}
 
@@ -91,7 +91,36 @@ public class WetterStation {
 			e.printStackTrace();
 		}
 	}
-
+	public void runWetterStationMqtt() throws InvalidOperationException, UnknownHostException, TException {
+		System.out.println("[+] Weather station started on port " + portNr);
+		// Station register server with Port and IP of Server
+		// System.out.println(weatherStationSubject.login(location));
+		weatherStationSubject
+				.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9901));
+		
+		weatherStationSubject
+		.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9902));
+		
+		weatherStationSubject
+		.registerWeatherServer(new com.thrift.Modes2.WeatherServer(WEATHER_SERVER_IP, 9903));
+		
+		weatherStationSubject.login(location);
+		
+		loggedIn = true;
+		while(true) {
+			
+		}
+	}
+	/**
+	 * Station receive Data(UDP) from sensors, store value on list 
+	 * temperature - humidity -  windStrength - rainfall - all
+	 * then station send data to Server
+	 * @param socket
+	 * @param packet
+	 * @throws InvalidOperationException
+	 * @throws TException
+	 * @throws IOException
+	 */
 	private void packetHandling(DatagramSocket socket, DatagramPacket packet)
 			throws InvalidOperationException, TException, IOException {
 		while (running) {
@@ -106,12 +135,18 @@ public class WetterStation {
 			notifyAllWeatherServe(data);
 		}
 	}
-
+	/*
+	 * get value in sensor
+	 */
 	private String getSensorValue(String sensorData) {
 		String parts[] = sensorData.split(" ", 4);
 		return parts[2];
 	}
-
+	/**
+	 * return Report dependent value of data
+	 * @param sensorData
+	 * @return
+	 */
 	private Report reportDependSensor(double sensorData) {
 		if (sensorData >= 0 && sensorData < 5) {
 			return Report.SNOW;
@@ -182,13 +217,13 @@ public class WetterStation {
 	 * store data of sensor each list sensor type
 	 * @param msg
 	 */
-	private void sensorToList(String msg) {
+	public static void sensorToList(String msg) {
+		System.out.println("[+] Message " + msg);
 		String msgToAdd = null;
 		if (msg.contains(" ")) {
 			if (msg.contains("Temperatur")) {
 				msgToAdd = msg.replace("Temperatur", "");
 				temperaturList.add(msgToAdd);
-				weatherData.setTemperature(msgToAdd);
 				alle.add(msgToAdd);
 			} else if (msg.contains("Luftfeuchtigkeit")) {
 				msgToAdd = msg.replace("Luftfeuchtigkeit", "");
@@ -204,8 +239,5 @@ public class WetterStation {
 				alle.add(msgToAdd);
 			}
 		}
-
 	}
-
-	;
 }

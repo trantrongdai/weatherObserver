@@ -53,7 +53,7 @@ public class Publisher {
         //System.out.println("[+] Publisher message: 1 ");
         
         try {
-        	System.out.println("[+] Publisher message: 2 ");
+        	//System.out.println("[+] Publisher message: 2 ");
             MqttClient client = new MqttClient(broker, MqttClient.generateClientId());
 
             // Connect to the MQTT broker using the connection options.
@@ -62,19 +62,33 @@ public class Publisher {
 
              while(true){
               // Create the message and set a quality-of-service parameter.
-                MqttMessage message = //new MqttMessage("Hello Manh Ton".getBytes());
-                        new MqttMessage((CliParameters.getInstance().getMessage() + " " + (int)(Math.random() * 100) )
+                MqttMessage temperature = new MqttMessage((CliParameters.getInstance().getTemparatur() + (int)(Math.random() * 100) + " °C" )
                                 .getBytes());
-                message.setQos(Constants.QOS_EXACTLY_ONCE);
-
-                // Publish the message.
-                System.out.println("[+] Publisher message: " + message.toString());
-                client.publish(cliParameters.getTopic(), message);
-                LOGGER.info("Published message: " + message);
-                
-               
+                temperature.setQos(Constants.QOS_EXACTLY_ONCE);
+                // Publish the temperature
+                client.publish(cliParameters.getTopic(), temperature);
+                // 
+                MqttMessage luftfeuchtigkeit = new MqttMessage((CliParameters.getInstance().getLuftfeuchtigkeit() + (int)(Math.random() * 100) + " %" )
+                        .getBytes());
+                luftfeuchtigkeit.setQos(Constants.QOS_EXACTLY_ONCE);
+                // Publish the temperature
+                client.publish(cliParameters.getTopic(), luftfeuchtigkeit);
+                MqttMessage windgeschwindigkeit = new MqttMessage((CliParameters.getInstance().getWindGeschwindigkeit() + (int)(Math.random() * 100) + " km/h" )
+                        .getBytes());
+                windgeschwindigkeit.setQos(Constants.QOS_EXACTLY_ONCE);
+                // Publish the temperature
+                client.publish(cliParameters.getTopic(), windgeschwindigkeit);
+                MqttMessage regen = new MqttMessage((CliParameters.getInstance().getRegen() + (int)(Math.random() * 100) + " ml/min")
+                        .getBytes());
+                regen.setQos(Constants.QOS_EXACTLY_ONCE);
+                // Publish the temperature
+                client.publish(cliParameters.getTopic(), regen);
+                LOGGER.info("Published message: " + temperature);
+                LOGGER.info("Published message: " + luftfeuchtigkeit);
+                LOGGER.info("Published message: " + windgeschwindigkeit);
+                LOGGER.info("Published message: " + regen);
                 try {
-                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException ex) {
                     java.util.logging.Logger.getLogger(Publisher.class.getName()).log(Level.SEVERE, null, ex);
                 }
